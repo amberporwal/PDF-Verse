@@ -1,3 +1,7 @@
+// Netlify pe frontend + alag server pe backend: VITE_API_URL me backend ka URL daalo (bina trailing slash).
+// Local dev me khali chhodo, Vite proxy kaam karega.
+const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+
 /**
  * Send a FormData to the Pdf VERSE API with upload progress.
  * Resolves with { blob, filename, meta, json, contentType }.
@@ -6,7 +10,7 @@
 export function postForm(route, formData, { onProgress, onUploaded, signal } = {}) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", `/api${route}`);
+    xhr.open("POST", `${API_BASE}/api${route}`);
     xhr.responseType = "blob";
 
     xhr.upload.onprogress = (e) => {
@@ -76,7 +80,7 @@ function filenameFromDisposition(header) {
 
 export async function getCapabilities() {
   try {
-    const res = await fetch("/api/capabilities");
+    const res = await fetch(`${API_BASE}/api/capabilities`);
     if (!res.ok) return null;
     return await res.json();
   } catch {
