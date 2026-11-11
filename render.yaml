@@ -1,13 +1,15 @@
+# Render Blueprint: repo root me rakho, Render > New > Blueprint se connect karo
 services:
   - type: web
     name: pdf-verse-api
     runtime: docker
-    # 0.5 CPU / 512 MB (~$7/mo). For LibreOffice conversions and big files
-    # change to 1c-2g (1 CPU / 2 GB). "free" also works but sleeps when idle.
-    plan: 0.5c-512mb
+    plan: starter        # LibreOffice ko ~1GB RAM chahiye; free (512MB) pe PPT/Word convert crash ho sakta hai
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /api/health
+    autoDeploy: true
     envVars:
       - key: CLIENT_ORIGIN
-        sync: false   # set to your Netlify URL, e.g. https://your-site.netlify.app
+        # Netlify site ka URL daalo (comma se multiple). Same-origin (Option 1) me zarurat nahi.
+        value: https://your-site-name.netlify.app
       - key: MAX_FILE_MB
         value: "50"
