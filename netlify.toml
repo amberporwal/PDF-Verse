@@ -9,6 +9,7 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  VITE_API_URL = "https://pdf-verse-amber.onrender.com"
 
 # Single-page app fallback
 [[redirects]]
