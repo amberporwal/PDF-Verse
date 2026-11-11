@@ -1,3 +1,8 @@
+# Netlify = sirf frontend. Backend Render pe hai (DEPLOY.md dekho).
+# IMPORTANT: Site configuration > Environment variables me VITE_API_URL set karo
+# (jaise https://pdf-verse-api.onrender.com, bina "/" ke), phir "Clear cache and deploy site".
+# Vite ye value build ke time frontend me bake karta hai, isliye baad me change karo to redeploy zaruri hai.
+
 [build]
   command = "npm run build"
   publish = "dist"

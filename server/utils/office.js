@@ -144,7 +144,7 @@ export async function htmlToPdfBuffer(html, { format = "A4", landscape = false, 
     );
   }
   const puppeteer = (await import("puppeteer-core")).default;
-  const args = ["--disable-gpu", "--font-render-hinting=none"];
+  const args = ["--disable-gpu", "--disable-dev-shm-usage", "--font-render-hinting=none"]; // dev-shm: containers have a tiny /dev/shm
   if (process.getuid?.() === 0) args.push("--no-sandbox"); // only needed when running as root (containers)
 
   const browser = await puppeteer.launch({ executablePath, headless: true, args });

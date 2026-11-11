@@ -1,6 +1,8 @@
 // Netlify pe frontend + alag server pe backend: VITE_API_URL me backend ka URL daalo (bina trailing slash).
 // Local dev me khali chhodo, Vite proxy kaam karega.
 const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+const NOT_CONFIGURED =
+  "The website cannot find its server. If this site is on Netlify, set VITE_API_URL to your Render URL and redeploy (see DEPLOY.md).";
 
 /**
  * Send a FormData to the Pdf VERSE API with upload progress.
@@ -19,7 +21,13 @@ export function postForm(route, formData, { onProgress, onUploaded, signal } = {
     xhr.upload.onload = () => onUploaded?.();
 
     xhr.onerror = () =>
-      reject(new Error("Cannot reach the Pdf VERSE server. Make sure it is running (npm run dev) and try again."));
+      reject(
+        new Error(
+          import.meta.env.DEV
+            ? "Cannot reach the Pdf VERSE server. Make sure it is running (npm run dev) and try again."
+            : "Cannot reach the Pdf VERSE server. It may be waking up (free hosting sleeps when idle), so wait a minute and try again.",
+        ),
+      );
     xhr.onabort = () => reject(new DOMException("Cancelled", "AbortError"));
 
     xhr.onload = async () => {
@@ -32,8 +40,12 @@ export function postForm(route, formData, { onProgress, onUploaded, signal } = {
           const data = JSON.parse(await blob.text());
           if (data?.error) message = data.error;
         } catch {
-          if (xhr.status === 502 || xhr.status === 504) {
-            message = "The Pdf VERSE server is not responding. Make sure it is running (npm run dev).";
+          if (xhr.status === 502 || xhr.status === 503 || xhr.status === 504) {
+            message = import.meta.env.DEV
+              ? "The Pdf VERSE server is not responding. Make sure it is running (npm run dev)."
+              : "The Pdf VERSE server is not responding. It may be waking up, so wait a minute and try again.";
+          } else if (xhr.status === 404 && !API_BASE && !import.meta.env.DEV) {
+            message = NOT_CONFIGURED;
           }
         }
         reject(new Error(message));
@@ -46,6 +58,12 @@ export function postForm(route, formData, { onProgress, onUploaded, signal } = {
         if (raw) meta = JSON.parse(decodeURIComponent(raw));
       } catch {
         /* meta is optional */
+      }
+
+      // Netlify answers unknown paths with index.html (SPA fallback). That means VITE_API_URL was not set at build time.
+      if (contentType.includes("text/html")) {
+        reject(new Error(NOT_CONFIGURED));
+        return;
       }
 
       if (contentType.includes("application/json")) {

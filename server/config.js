@@ -13,7 +13,7 @@ try {
 export const PORT = Number(process.env.PORT) || 5000;
 export const CLIENT_ORIGIN = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
   .split(",")
-  .map((s) => s.trim())
+  .map((s) => s.trim().replace(/\/+$/, "")) // "https://site.netlify.app/" -> "https://site.netlify.app" (browsers never send the slash)
   .filter(Boolean);
 
 export const MAX_FILE_MB = Number(process.env.MAX_FILE_MB) || 50;

@@ -42,6 +42,10 @@ test/api.test.mjs     68 end-to-end API tests
 
 `POST /api/merge-pdf` (field `pdfs`) and `POST /api/split-pdf` (field `pdf`, optional `ranges`) keep the original URLs and field names.
 
+## Deploy
+
+Step-by-step Netlify + Render guide (Hinglish): see [DEPLOY.md](DEPLOY.md).
+
 ## Tests
 
 Start the backend, then in another terminal:
