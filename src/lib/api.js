@@ -1,7 +1,3 @@
-// Backend base URL. Empty = same origin (local dev proxy / single-server build).
-// On Netlify set VITE_API_URL to the backend URL, e.g. https://pdf-verse-api.onrender.com
-const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
-
 /**
  * Send a FormData to the Pdf VERSE API with upload progress.
  * Resolves with { blob, filename, meta, json, contentType }.
@@ -10,7 +6,7 @@ const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
 export function postForm(route, formData, { onProgress, onUploaded, signal } = {}) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", `${API_BASE}/api${route}`);
+    xhr.open("POST", `/api${route}`);
     xhr.responseType = "blob";
 
     xhr.upload.onprogress = (e) => {
@@ -80,7 +76,7 @@ function filenameFromDisposition(header) {
 
 export async function getCapabilities() {
   try {
-    const res = await fetch(`${API_BASE}/api/capabilities`);
+    const res = await fetch("/api/capabilities");
     if (!res.ok) return null;
     return await res.json();
   } catch {
