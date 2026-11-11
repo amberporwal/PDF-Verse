@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: pdf-verse-api
+    runtime: docker
+    # 0.5 CPU / 512 MB (~$7/mo). For LibreOffice conversions and big files
+    # change to 1c-2g (1 CPU / 2 GB). "free" also works but sleeps when idle.
+    plan: 0.5c-512mb
+    healthCheckPath: /api/health
+    envVars:
+      - key: CLIENT_ORIGIN
+        sync: false   # set to your Netlify URL, e.g. https://your-site.netlify.app
+      - key: MAX_FILE_MB
+        value: "50"
